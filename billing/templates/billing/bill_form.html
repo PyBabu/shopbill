@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}New Bill — ShopBill{% endblock %}
+{% block nav_billing %}active{% endblock %}
+{% block topbar_title %}Create New Bill{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/bill_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-heading">Create New Bill</h1>
+        <p class="page-subheading">Add products, enter cash and generate invoice instantly</p>
+    </div>
+</div>
+
+<form method="POST" id="billForm">
+{% csrf_token %}
+<div class="bill-form-grid">
+
+    <!-- ── Left Column ── -->
+    <div class="bill-form-left">
+
+        <!-- Customer -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">👤 Customer Information</span>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label form-label-required">Customer Email Address</label>
+                    <input type="email"
+                           name="customer_email"
+                           class="form-control"
+                           placeholder="customer@example.com"
+                           required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🛒 Bill Items</span>
+                <button type="button" class="btn btn-primary btn-sm"
+                        onclick="addProductRow()">
+                    + Add Product
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="product-row-headers">
+                    <span>Product ID</span>
+                    <span>Quantity</span>
+                    <span style="width:34px;"></span>
+                </div>
+
+                <div class="product-rows-container" id="product-rows"></div>
+
+                <button type="button" class="add-row-btn" onclick="addProductRow()">
+                    <span class="add-row-icon">＋</span>
+                    Add Another Product
+                </button>
+            </div>
+        </div>
+
+        <!-- Cash Paid -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">💵 Payment</span>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label form-label-required">
+                        Cash Paid by Customer (₹)
+                    </label>
+                    <input type="number"
+                           name="cash_paid"
+                           class="form-control"
+                           placeholder="Enter amount paid"
+                           step="0.01"
+                           min="0.01"
+                           required>
+                    <p class="form-hint">
+                        Enter the total cash the customer handed over.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Right Column ── -->
+    <div class="bill-form-right">
+
+        <!-- Denominations -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🪙 Cash in Shop</span>
+            </div>
+            <div class="card-body">
+                <p class="form-hint" style="margin-bottom:14px;">
+                    Enter how many notes/coins of each denomination are available.
+                </p>
+                <div class="denom-grid">
+                    {% for denomination, field in form.get_denomination_fields %}
+                    <div class="denom-item">
+                        <span class="denom-label">
+                            <span class="denom-rupee-symbol">₹</span>{{ denomination }}
+                        </span>
+                        <input
+                            type="number"
+                            name="{{ field.html_name }}"
+                            class="denom-input"
+                            placeholder="0"
+                            min="0"
+                            value="0"
+                        >
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div class="card">
+            <div class="card-body">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success btn-full-width btn-lg">
+                        🧾 &nbsp; Generate Bill
+                    </button>
+                    <button type="button"
+                            class="btn btn-ghost btn-full-width"
+                            onclick="resetForm()">
+                        ✕ &nbsp; Clear Form
+                    </button>
+                </div>
+                <div class="info-tip" style="margin-top:14px;">
+                    <span class="info-tip-icon">💡</span>
+                    <span>Invoice PDF will be automatically emailed to the customer.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Quick Reference -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📦 Product List</span>
+                <a href="/admin/products/product/"
+                   target="_blank"
+                   class="btn btn-ghost btn-sm">
+                    Manage ↗
+                </a>
+            </div>
+            <div class="card-body-flush">
+                <div class="table-wrap">
+                    <table class="quick-ref-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Tax</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>
+                                    <span class="badge badge-navy">#{{ product.id }}</span>
+                                </td>
+                                <td style="font-weight:600;">{{ product.name }}</td>
+                                <td style="font-weight:700; color:var(--green-dark);">
+                                    ₹{{ product.price }}
+                                </td>
+                                <td>
+                                    <span class="badge badge-amber">
+                                        {{ product.tax_percentage }}%
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state" style="padding:20px;">
+                                        <div class="empty-state-text">No products found</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</form>
+
+<script>
+let rowCount = 0;
+
+function addProductRow() {
+    const container = document.getElementById("product-rows");
+    const id = rowCount++;
+    const div = document.createElement("div");
+    div.className = "product-row";
+    div.id = `row_${id}`;
+    div.innerHTML = `
+        <div class="product-row-field">
+            <span class="product-row-num">Product ID</span>
+            <input type="number"
+                   name="product_id_${id}"
+                   placeholder="e.g. 1"
+                   min="1"
+                   class="form-control form-control-sm">
+        </div>
+        <div class="product-row-field">
+            <span class="product-row-num">Quantity</span>
+            <input type="number"
+                   name="quantity_${id}"
+                   placeholder="e.g. 2"
+                   min="1"
+                   class="form-control form-control-sm">
+        </div>
+        <div class="product-row-remove">
+            <button type="button"
+                    class="btn btn-danger btn-icon"
+                    onclick="removeRow('row_${id}')"
+                    title="Remove row">✕</button>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+function removeRow(rowId) {
+    const allRows = document.querySelectorAll(".product-row");
+    if (allRows.length <= 1) {
+        alert("At least one product row is required.");
+        return;
+    }
+    const row = document.getElementById(rowId);
+    if (row) {
+        row.style.animation = "rowSlideIn 0.15s ease reverse";
+        setTimeout(() => row.remove(), 140);
+    }
+}
+
+function resetForm() {
+    document.getElementById("billForm").reset();
+    document.getElementById("product-rows").innerHTML = "";
+    rowCount = 0;
+    // Reset denom inputs
+    document.querySelectorAll(".denom-input").forEach(i => i.value = "0");
+}
+
+// Add first row on load
+document.addEventListener("DOMContentLoaded", () => addProductRow());
+</script>
+{% endblock %}

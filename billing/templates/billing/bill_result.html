@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Invoice #{{ purchase.id }} — ShopBill{% endblock %}
+{% block nav_billing %}active{% endblock %}
+{% block topbar_title %}Invoice #{{ purchase.id }}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/bill_result.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Top Actions ── -->
+<div class="page-header">
+    <div>
+        <h1 class="page-heading">Bill Generated Successfully</h1>
+        <p class="page-subheading">Invoice emailed to {{ summary.customer_email }}</p>
+    </div>
+    <div class="result-actions">
+        <a href="{% url 'billing:bill_form' %}" class="btn btn-primary">
+            + New Bill
+        </a>
+        <a href="{% url 'purchases:search' %}?email={{ summary.customer_email }}"
+           class="btn btn-ghost">
+            View History
+        </a>
+    </div>
+</div>
+
+<!-- ── Invoice Banner ── -->
+<div class="invoice-banner">
+    <div class="invoice-banner-left">
+        <div class="invoice-logo-box">🛍️</div>
+        <div>
+            <div class="invoice-brand-name">ShopBill</div>
+            <div class="invoice-brand-tagline">Your Trusted Billing Partner</div>
+        </div>
+    </div>
+    <div class="invoice-banner-right">
+        <div class="invoice-number-label">Invoice Number</div>
+        <div class="invoice-number"># {{ purchase.id|stringformat:"05d" }}</div>
+        <div class="invoice-meta">
+            <span class="invoice-meta-chip">
+                📅 {{ purchase.created_at|date:"d M Y" }}
+            </span>
+            <span class="invoice-meta-chip">
+                🕐 {{ purchase.created_at|date:"h:i A" }}
+            </span>
+            <span class="invoice-meta-chip" style="color:var(--green);">
+                ✅ Paid
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- ── Bill Info Strip ── -->
+<div class="bill-info-strip">
+    <div class="bill-info-item">
+        <div class="bill-info-label">Customer Email</div>
+        <div class="bill-info-value">{{ summary.customer_email }}</div>
+    </div>
+    <div class="bill-info-item">
+        <div class="bill-info-label">Total Items</div>
+        <div class="bill-info-value">{{ summary.items|length }} Product(s)</div>
+    </div>
+    <div class="bill-info-item">
+        <div class="bill-info-label">Bill Total</div>
+        <div class="bill-info-value" style="color:var(--blue-dark);">
+            ₹{{ summary.rounded_total }}
+        </div>
+    </div>
+    <div class="bill-info-item">
+        <div class="bill-info-label">Balance Returned</div>
+        <div class="bill-info-value" style="color:var(--green-dark);">
+            ₹{{ summary.balance }}
+        </div>
+    </div>
+</div>
+
+<!-- ── Items Table ── -->
+<div class="card" style="margin-bottom:0;">
+    <div class="card-header">
+        <span class="card-title">🛒 Items Purchased</span>
+        <span class="badge badge-blue">{{ summary.items|length }} items</span>
+    </div>
+    <div class="card-body-flush">
+        <div class="items-table-wrap">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Qty</th>
+                        <th>Purchase Price</th>
+                        <th>Tax %</th>
+                        <th>Tax Amount</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in summary.items %}
+                    <tr>
+                        <td>
+                            <span class="badge badge-gray">
+                                {{ forloop.counter }}
+                            </span>
+                        </td>
+                        <td class="col-product">
+                            {{ item.product.name }}
+                            <br>
+                            <span style="font-size:11px;
+                                         color:var(--gray-400);
+                                         font-weight:400;">
+                                ID #{{ item.product.id }}
+                            </span>
+                        </td>
+                        <td>₹{{ item.unit_price }}</td>
+                        <td>
+                            <span class="badge badge-blue">
+                                {{ item.quantity }}
+                            </span>
+                        </td>
+                        <td>₹{{ item.purchase_price }}</td>
+                        <td class="col-tax">{{ item.tax_percentage }}%</td>
+                        <td>₹{{ item.tax_amount }}</td>
+                        <td class="col-total">₹{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── Bottom Grid: Summary + Denominations ── -->
+<div class="result-bottom-grid">
+
+    <!-- ── Bill Summary ── -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📊 Bill Summary</span>
+        </div>
+        <div class="card-body-flush">
+            <table class="summary-table">
+                <tbody>
+                    <tr>
+                        <td class="summary-label">Total price without tax</td>
+                        <td class="summary-value">₹{{ summary.total_without_tax }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Total tax payable</td>
+                        <td class="summary-value">₹{{ summary.total_tax }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Net price of items</td>
+                        <td class="summary-value">₹{{ summary.net_total }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Rounded total</td>
+                        <td class="summary-value">₹{{ summary.rounded_total }}</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Cash paid by customer</td>
+                        <td class="summary-value">₹{{ summary.cash_paid }}</td>
+                    </tr>
+                    <tr class="summary-row-highlight">
+                        <td class="summary-label">Balance Returned to Customer</td>
+                        <td class="summary-value">₹{{ summary.balance }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── Denomination Breakdown ─── -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">🪙 Balance Denomination</span>
+        </div>
+        <div class="card-body">
+            {% if summary.balance_denominations %}
+                <div class="denom-result-list">
+                    {% for denomination, count in summary.balance_denominations.items %}
+                    <div class="denom-result-item">
+                        <div class="denom-note">
+                            <span class="denom-note-chip">₹{{ denomination }}</span>
+                            <span class="denom-note-label">note/coin</span>
+                        </div>
+                        <div class="denom-count">
+                            <span class="denom-count-num">{{ count }}</span>
+                            <span class="denom-count-label">pcs</span>
+                        </div>
+                        <span class="denom-total-chip">
+                            ₹{{ denomination }} × {{ count }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-change-msg">
+                    <div style="font-size:28px; margin-bottom:8px;">✅</div>
+                    No change to return
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

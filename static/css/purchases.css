@@ -1,0 +1,158 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   ShopBill — Purchase History Pages Styles
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Search Box ──────────────────────────────────────────────────────────── */
+.search-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.search-input-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 440px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    color: var(--gray-400);
+}
+
+.search-input {
+    padding-left: 38px;
+}
+
+/* ── Purchase List Table ─────────────────────────────────────────────────── */
+.purchases-table thead th:first-child {
+    border-radius: var(--radius-sm) 0 0 0;
+}
+.purchases-table thead th:last-child {
+    border-radius: 0 var(--radius-sm) 0 0;
+}
+
+.purchase-id-cell {
+    font-weight: 700;
+    color: var(--blue-dark);
+    font-size: 13px;
+}
+
+.purchase-date-cell {
+    color: var(--gray-500);
+    font-size: 12.5px;
+}
+
+.purchase-amount-cell {
+    font-weight: 800;
+    color: var(--navy);
+    font-size: 14px;
+}
+
+.purchase-balance-cell {
+    font-weight: 600;
+    color: var(--green-dark);
+}
+
+/* ── Purchase Detail Header ──────────────────────────────────────────────── */
+.detail-header-band {
+    background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.detail-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.4px;
+}
+
+.detail-subtitle {
+    font-size: 12.5px;
+    color: var(--gray-400);
+    margin-top: 4px;
+}
+
+.detail-meta-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.detail-meta-chip {
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 7px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--white);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.detail-meta-chip span:first-child {
+    color: var(--gray-400);
+    font-weight: 400;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* ── Detail Summary ──────────────────────────────────────────────────────── */
+.detail-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.detail-summary-item {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.detail-summary-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 5px;
+}
+
+.detail-summary-value {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+}
+
+.detail-summary-value.text-green  { color: var(--green-dark); }
+.detail-summary-value.text-amber  { color: var(--amber); }
+.detail-summary-value.text-blue   { color: var(--blue-dark); }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .search-box { flex-direction: column; }
+    .search-input-wrap { max-width: 100%; }
+    .detail-header-band { padding: 18px; }
+    .detail-title { font-size: 16px; }
+}

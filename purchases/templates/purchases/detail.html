@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Bill #{{ purchase.id }} — ShopBill{% endblock %}
+{% block nav_purchases %}active{% endblock %}
+{% block topbar_title %}Bill #{{ purchase.id }}{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/purchases.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bill_result.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-heading">Bill Detail</h1>
+        <p class="page-subheading">{{ purchase.customer_email }}</p>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="{% url 'purchases:search' %}?email={{ purchase.customer_email }}"
+           class="btn btn-ghost">
+            ← Back to History
+        </a>
+        <a href="{% url 'billing:bill_form' %}" class="btn btn-primary">
+            + New Bill
+        </a>
+    </div>
+</div>
+
+<!-- Detail Header Band -->
+<div class="detail-header-band">
+    <div>
+        <div class="detail-title">Invoice #{{ purchase.id|stringformat:"05d" }}</div>
+        <div class="detail-subtitle">{{ purchase.customer_email }}</div>
+    </div>
+    <div class="detail-meta-chips">
+        <div class="detail-meta-chip">
+            <span>Date</span>
+            {{ purchase.created_at|date:"d M Y, h:i A" }}
+        </div>
+        <div class="detail-meta-chip">
+            <span>Items</span>
+            {{ purchase.items.count }} product(s)
+        </div>
+        <div class="detail-meta-chip"
+             style="background:rgba(16,185,129,0.15);
+                    border-color:rgba(16,185,129,0.3);">
+            ✅ Paid
+        </div>
+    </div>
+</div>
+
+<!-- Summary Grid -->
+<div class="detail-summary-grid">
+    <div class="detail-summary-item">
+        <div class="detail-summary-label">Total without Tax</div>
+        <div class="detail-summary-value">₹{{ purchase.total_without_tax }}</div>
+    </div>
+    <div class="detail-summary-item">
+        <div class="detail-summary-label">Total Tax</div>
+        <div class="detail-summary-value text-amber">₹{{ purchase.total_tax }}</div>
+    </div>
+    <div class="detail-summary-item">
+        <div class="detail-summary-label">Bill Total</div>
+        <div class="detail-summary-value text-blue">₹{{ purchase.rounded_total }}</div>
+    </div>
+    <div class="detail-summary-item">
+        <div class="detail-summary-label">Cash Paid</div>
+        <div class="detail-summary-value">₹{{ purchase.cash_paid }}</div>
+    </div>
+    <div class="detail-summary-item">
+        <div class="detail-summary-label">Balance Returned</div>
+        <div class="detail-summary-value text-green">₹{{ purchase.balance_returned }}</div>
+    </div>
+</div>
+
+<!-- Items Table -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">🛒 Purchased Items</span>
+        <span class="badge badge-blue">{{ purchase.items.count }} items</span>
+    </div>
+    <div class="card-body-flush">
+        <div class="items-table-wrap">
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Unit Price</th>
+                        <th>Qty</th>
+                        <th>Purchase Price</th>
+                        <th>Tax %</th>
+                        <th>Tax Amount</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in purchase.items.all %}
+                    <tr>
+                        <td>
+                            <span class="badge badge-gray">{{ forloop.counter }}</span>
+                        </td>
+                        <td class="col-product">
+                            {{ item.product.name }}
+                            <br>
+                            <span style="font-size:11px; color:var(--gray-400);
+                                         font-weight:400;">
+                                ID #{{ item.product.id }}
+                            </span>
+                        </td>
+                        <td>₹{{ item.unit_price }}</td>
+                        <td>
+                            <span class="badge badge-blue">{{ item.quantity }}</span>
+                        </td>
+                        <td>₹{{ item.purchase_price }}</td>
+                        <td class="col-tax">{{ item.tax_percentage }}%</td>
+                        <td>₹{{ item.tax_amount }}</td>
+                        <td class="col-total">₹{{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

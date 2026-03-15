@@ -1,0 +1,33 @@
+ShopBill — Invoice #{{ purchase.id }}
+========================================
+
+Dear Customer,
+
+Thank you for your purchase! Here is your invoice summary.
+
+Customer Email : {{ purchase.customer_email }}
+Date           : {{ purchase.created_at|date:"d M Y, h:i A" }}
+
+ITEMS PURCHASED
+---------------
+{% for item in purchase.items.all %}
+{{ item.product.name }}
+  Quantity      : {{ item.quantity }}
+  Unit Price    : Rs.{{ item.unit_price }}
+  Purchase Price: Rs.{{ item.purchase_price }}
+  Tax ({{ item.tax_percentage }}%)  : Rs.{{ item.tax_amount }}
+  Total         : Rs.{{ item.total_price }}
+{% endfor %}
+
+BILL SUMMARY
+------------
+Total without tax : Rs.{{ purchase.total_without_tax }}
+Total tax         : Rs.{{ purchase.total_tax }}
+Net total         : Rs.{{ purchase.net_total }}
+Rounded total     : Rs.{{ purchase.rounded_total }}
+Cash paid         : Rs.{{ purchase.cash_paid }}
+Balance returned  : Rs.{{ purchase.balance_returned }}
+
+========================================
+Thank you for shopping with us!
+ShopBill Team

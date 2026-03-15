@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Purchase History — ShopBill{% endblock %}
+{% block nav_purchases %}active{% endblock %}
+{% block topbar_title %}Purchase History{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/purchases.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-heading">Purchase History</h1>
+        <p class="page-subheading">Search and view past purchases by customer email</p>
+    </div>
+    <a href="{% url 'billing:bill_form' %}" class="btn btn-primary">
+        + New Bill
+    </a>
+</div>
+
+<!-- Search -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-body">
+        <form method="GET">
+            <div class="search-box">
+                <div class="form-group" style="margin:0; flex:1; max-width:440px;">
+                    <label class="form-label">Search by Customer Email</label>
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            type="email"
+                            name="email"
+                            value="{{ searched_email }}"
+                            class="form-control search-input"
+                            placeholder="customer@example.com"
+                            autofocus
+                        >
+                    </div>
+                </div>
+                <div style="padding-top:22px;">
+                    <button type="submit" class="btn btn-primary">
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results -->
+{% if searched_email %}
+    {% if purchases %}
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">
+                📋 Results for
+                <span style="color:var(--blue);">{{ searched_email }}</span>
+            </span>
+            <span class="badge badge-blue">{{ purchases|length }} purchase(s)</span>
+        </div>
+        <div class="card-body-flush">
+            <div class="table-wrap">
+                <table class="purchases-table">
+                    <thead>
+                        <tr>
+                            <th>Bill #</th>
+                            <th>Date & Time</th>
+                            <th>Items</th>
+                            <th>Bill Total</th>
+                            <th>Cash Paid</th>
+                            <th>Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for purchase in purchases %}
+                        <tr>
+                            <td>
+                                <span class="purchase-id-cell">
+                                    #{{ purchase.id|stringformat:"05d" }}
+                                </span>
+                            </td>
+                            <td class="purchase-date-cell">
+                                {{ purchase.created_at|date:"d M Y" }}<br>
+                                <span style="font-size:11.5px;">
+                                    {{ purchase.created_at|date:"h:i A" }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge badge-blue">
+                                    {{ purchase.items.count }} item(s)
+                                </span>
+                            </td>
+                            <td class="purchase-amount-cell">
+                                ₹{{ purchase.rounded_total }}
+                            </td>
+                            <td>₹{{ purchase.cash_paid }}</td>
+                            <td class="purchase-balance-cell">
+                                ₹{{ purchase.balance_returned }}
+                            </td>
+                            <td>
+                                <a href="{% url 'purchases:detail' purchase.id %}"
+                                   class="btn btn-outline-blue btn-sm">
+                                    View →
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="card">
+        <div class="card-body">
+            <div class="empty-state">
+                <div class="empty-state-icon">🔍</div>
+                <div class="empty-state-title">No purchases found</div>
+                <div class="empty-state-text">
+                    No purchases found for <strong>{{ searched_email }}</strong>.
+                    Check the email address and try again.
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

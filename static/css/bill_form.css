@@ -1,0 +1,248 @@
+/* ───────────────────
+   ShopBill — Bill Form Page Styles
+────────────────── */
+
+/* ── Layout ── */
+.bill-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+    align-items: start;
+}
+
+.bill-form-left  { display: flex; flex-direction: column; gap: 18px; }
+.bill-form-right { display: flex; flex-direction: column; gap: 18px; }
+
+/* ── Section Label ── */
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+}
+
+.section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+}
+
+/* ── Product Rows ----- */
+.product-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+    min-height: 20px;
+}
+
+.product-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 14px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition), box-shadow var(--transition);
+    animation: rowSlideIn 0.2s ease;
+}
+
+@keyframes rowSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.product-row:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.product-row-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.product-row-num {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-row-remove {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 1px;
+}
+
+/* Add row button */
+.add-row-btn {
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--blue);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.add-row-btn:hover {
+    border-color: var(--blue);
+    background: var(--blue-50);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.add-row-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+
+/* Column headers */
+.product-row-headers {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    padding: 0 14px;
+    margin-bottom: 4px;
+}
+
+.product-row-headers span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── Denominations ───────────────────────────────────────────────────────── */
+.denom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.denom-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    padding: 9px 11px;
+    transition: border-color var(--transition);
+}
+
+.denom-item:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.10);
+    background: var(--white);
+}
+
+.denom-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    min-width: 38px;
+    display: flex;
+    align-items: baseline;
+    gap: 1px;
+    flex-shrink: 0;
+}
+
+.denom-rupee-symbol {
+    font-size: 10px;
+    color: var(--gray-400);
+    font-weight: 500;
+}
+
+.denom-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    outline: none;
+    text-align: right;
+    width: 100%;
+}
+
+.denom-input::placeholder {
+    color: var(--gray-300);
+    font-weight: 400;
+}
+
+/* ── Quick Products Reference ── */
+.quick-ref-table th {
+    font-size: 10.5px;
+    padding: 8px 12px;
+}
+
+.quick-ref-table td {
+    padding: 8px 12px;
+    font-size: 12.5px;
+}
+
+/* ── Info Tip -----───── */
+.info-tip {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--amber-100);
+    border: 1px solid #FCD34D;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 12.5px;
+    color: #92400E;
+    line-height: 1.5;
+}
+
+.info-tip-icon {
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ── Form Actions ----- */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Responsive -----── */
+@media (max-width: 900px) {
+    .bill-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-row {
+        grid-template-columns: 1fr 1fr auto;
+        gap: 8px;
+    }
+    .denom-grid {
+        grid-template-columns: 1fr;
+    }
+}

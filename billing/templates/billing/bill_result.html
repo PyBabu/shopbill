@@ -185,7 +185,15 @@
                     <div class="denom-result-item">
                         <div class="denom-note">
                             <span class="denom-note-chip">₹{{ denomination }}</span>
-                            <span class="denom-note-label">note/coin</span>
+                            <span class="denom-note-label">
+    {% if denomination >= 20 %}
+        note
+    {% elif denomination == 10 %}
+        coin/note
+    {% else %}
+        coin
+    {% endif %}
+</span>
                         </div>
                         <div class="denom-count">
                             <span class="denom-count-num">{{ count }}</span>

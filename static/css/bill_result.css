@@ -1,7 +1,3 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   ShopBill — Bill Result Page Styles
-───────────────────────────────────────────────────────────────────────────── */
-
 /* ── Invoice Header Banner ───────────────────────────────────────────────── */
 .invoice-banner {
     background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
@@ -296,6 +292,8 @@
     background: var(--green-100);
     padding: 2px 8px;
     border-radius: 5px;
+    white-space: nowrap;        
+    flex-shrink: 0;            
 }
 
 .no-change-msg {

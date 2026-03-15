@@ -30,7 +30,9 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <label class="form-label form-label-required">Customer Email Address</label>
+                    <label class="form-label form-label-required">
+                        Customer Email Address
+                    </label>
                     <input type="email"
                            name="customer_email"
                            class="form-control"
@@ -44,7 +46,8 @@
         <div class="card">
             <div class="card-header">
                 <span class="card-title">🛒 Bill Items</span>
-                <button type="button" class="btn btn-primary btn-sm"
+                <button type="button"
+                        class="btn btn-primary btn-sm"
                         onclick="addProductRow()">
                     + Add Product
                 </button>
@@ -58,7 +61,9 @@
 
                 <div class="product-rows-container" id="product-rows"></div>
 
-                <button type="button" class="add-row-btn" onclick="addProductRow()">
+                <button type="button"
+                        class="add-row-btn"
+                        onclick="addProductRow()">
                     <span class="add-row-icon">＋</span>
                     Add Another Product
                 </button>
@@ -107,7 +112,8 @@
                     {% for denomination, field in form.get_denomination_fields %}
                     <div class="denom-item">
                         <span class="denom-label">
-                            <span class="denom-rupee-symbol">₹</span>{{ denomination }}
+                            <span class="denom-rupee-symbol">₹</span>
+                            {{ denomination }}
                         </span>
                         <input
                             type="number"
@@ -115,7 +121,7 @@
                             class="denom-input"
                             placeholder="0"
                             min="0"
-                            value="0"
+                            value="{{ field.value|default:10 }}"
                         >
                     </div>
                     {% endfor %}
@@ -127,7 +133,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-success btn-full-width btn-lg">
+                    <button type="submit"
+                            class="btn btn-success btn-full-width btn-lg">
                         🧾 &nbsp; Generate Bill
                     </button>
                     <button type="button"
@@ -138,7 +145,9 @@
                 </div>
                 <div class="info-tip" style="margin-top:14px;">
                     <span class="info-tip-icon">💡</span>
-                    <span>Invoice PDF will be automatically emailed to the customer.</span>
+                    <span>
+                        Invoice PDF will be automatically emailed to the customer.
+                    </span>
                 </div>
             </div>
         </div>
@@ -168,10 +177,15 @@
                             {% for product in products %}
                             <tr>
                                 <td>
-                                    <span class="badge badge-navy">#{{ product.id }}</span>
+                                    <span class="badge badge-navy">
+                                        #{{ product.id }}
+                                    </span>
                                 </td>
-                                <td style="font-weight:600;">{{ product.name }}</td>
-                                <td style="font-weight:700; color:var(--green-dark);">
+                                <td style="font-weight:600;">
+                                    {{ product.name }}
+                                </td>
+                                <td style="font-weight:700;
+                                           color:var(--green-dark);">
                                     ₹{{ product.price }}
                                 </td>
                                 <td>
@@ -183,8 +197,11 @@
                             {% empty %}
                             <tr>
                                 <td colspan="4">
-                                    <div class="empty-state" style="padding:20px;">
-                                        <div class="empty-state-text">No products found</div>
+                                    <div class="empty-state"
+                                         style="padding:20px;">
+                                        <div class="empty-state-text">
+                                            No products found
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -252,8 +269,10 @@ function resetForm() {
     document.getElementById("billForm").reset();
     document.getElementById("product-rows").innerHTML = "";
     rowCount = 0;
-    // Reset denom inputs
-    document.querySelectorAll(".denom-input").forEach(i => i.value = "0");
+    // Reset denom inputs back to 10 (default available count)
+    document.querySelectorAll(".denom-input").forEach(i => i.value = "10");
+    // Add one fresh product row
+    addProductRow();
 }
 
 // Add first row on load
